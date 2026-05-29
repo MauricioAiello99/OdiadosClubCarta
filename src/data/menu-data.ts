@@ -33,7 +33,7 @@ export const menuData: Product[] = [
     },
     {
         id: '5',
-        name: 'CANCELADAS X 4',
+        name: '4 X CANCELADAS',
         description: 'Cuatro hamburguesas canceladas: Carne, doble cheddar, salsa envidia',
         price: 45000,
         category: 'ofertas',
@@ -41,7 +41,7 @@ export const menuData: Product[] = [
     },
     {
         id: '6',
-        name: 'SHADOWBAN X 2',
+        name: '2 X SHADOWBAN',
         description: '2 hamburguesas shadowbans: Carne,  cheddar, salsa tasty, bacon.',
         price: 25000,
         detail: '🧀  Cheddar',
