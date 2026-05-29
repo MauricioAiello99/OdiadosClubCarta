@@ -31,7 +31,7 @@ const EXTRA_CHEESE_PRICE = 1000;
 
     <div class="customizer-panel">
         <div class="panel-label">PERSONALIZAR:</div>
-        
+
         <div class="selector-row">
             <span class="option-label"><span class="icon">🥩</span> CARNE</span>
             <div class="option-buttons meat-options">
@@ -46,6 +46,10 @@ const EXTRA_CHEESE_PRICE = 1000;
                 <button class="btn-selector active" data-type="cheese" data-qty="2">DOBLE</button>
                 <button class="btn-selector" data-type="cheese" data-qty="3">TRIPLE</button>
             </div>
+        </div>
+
+        <div class="selector-row static-row">
+            <span class="option-label"><span class="icon">🍟</span> PAPAS FRITAS</span>
         </div>
     </div>
 
@@ -176,7 +180,8 @@ const EXTRA_CHEESE_PRICE = 1000;
   .product-name { font-size: 2.2rem; margin: 0; line-height: 0.9; text-transform: uppercase; color: white; font-weight: 900; }
   .badge-new { background-color: var(--color-red, #dc2626); color: black; font-size: 0.7rem; font-weight: 900; padding: 4px 8px; letter-spacing: 1px; transform: rotate(5deg); }
   .separator { height: 4px; width: 50px; background-color: var(--color-red, #dc2626); margin: 1rem 0; }
-  .description { color: #aaa; font-size: 0.95rem; line-height: 1.4; margin-bottom: 1.5rem; }
+  .description { color: #aaa; font-size: 0.95rem; line-height: 1.4; margin-bottom: 0.5rem; }
+  .promo-detail { color: var(--color-red, #dc2626); font-size: 0.85rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 1.5rem; }
   .customizer-panel { background-color: #0a0a0a; padding: 1rem 1.5rem; border-top: 2px solid var(--color-red, #dc2626); border-bottom: 1px solid #222; }
   .panel-label { font-size: 0.7rem; color: #555; letter-spacing: 2px; margin-bottom: 10px; font-weight: bold; }
   .selector-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }

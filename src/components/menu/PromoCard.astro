@@ -1,0 +1,75 @@
+---
+import type { Product } from '../../data/menu-data';
+
+interface Props {
+    product: Product;
+}
+
+const { product } = Astro.props;
+---
+
+<article class="promo-card" data-id={product.id} data-name={product.name} data-price={product.price}>
+    <div class="card-upper">
+        <header class="card-header">
+            <h3 class="product-name font-gothic">{product.name}</h3>
+            <span class="badge-promo">PROMO</span>
+        </header>
+        <div class="separator"></div>
+        <p class="description">{product.description}</p>
+        <p class="promo-detail">🥩 Doble carne</p>
+        {product.detail && <p class="promo-detail">{product.detail}</p>}
+        <p class="promo-detail">🍟 Papas fritas</p>
+    </div>
+
+    <footer class="card-footer">
+        <div class="price-container">
+            <span class="price-label">PRECIO FINAL:</span>
+            <span class="price">${product.price}</span>
+        </div>
+        <button class="btn-add-cart">AGREGAR AL PEDIDO</button>
+    </footer>
+</article>
+
+<script>
+    import { addProduct } from '../../store/cart';
+
+    document.querySelectorAll('.promo-card').forEach(card => {
+        const btn = card.querySelector('.btn-add-cart');
+        btn?.addEventListener('click', () => {
+            const id = card.getAttribute('data-id') || '';
+            const name = card.getAttribute('data-name') || '';
+            const price = Number(card.getAttribute('data-price'));
+            if (id && name && price) {
+                addProduct({ id, name, price });
+            }
+        });
+    });
+</script>
+
+<style>
+  .promo-card {
+    position: relative;
+    box-shadow: 8px 8px 0px #f59e0b;
+    background-color: #111;
+    border: 2px solid #222;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .promo-card:hover { border-color: #f59e0b; }
+  .card-upper { padding: 1.5rem 1.5rem 0 1.5rem; flex-grow: 1; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .product-name { font-size: 2rem; margin: 0; line-height: 0.9; text-transform: uppercase; color: white; font-weight: 900; }
+  .badge-promo { background-color: #f59e0b; color: black; font-size: 0.7rem; font-weight: 900; padding: 4px 8px; letter-spacing: 1px; transform: rotate(5deg); flex-shrink: 0; }
+  .separator { height: 4px; width: 50px; background-color: #f59e0b; margin: 1rem 0; }
+  .description { color: #aaa; font-size: 0.95rem; line-height: 1.4; margin-bottom: 0.5rem; }
+  .promo-detail { color: #f59e0b; font-size: 0.85rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 1.5rem; }
+  .card-footer { padding: 1.5rem; background-color: #151515; border-top: 1px solid #222; }
+  .price-container { margin-bottom: 1rem; text-align: right; }
+  .price-label { display: block; font-size: 0.7rem; color: #888; margin-bottom: 2px; }
+  .price { font-size: 2rem; font-weight: 900; color: white; letter-spacing: -1px; }
+  .btn-add-cart { width: 100%; background-color: #f59e0b; border: none; color: black; padding: 1rem; cursor: pointer; font-size: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; transition: all 0.2s; box-shadow: 0 4px 0px #b45309; }
+  .btn-add-cart:hover { transform: translateY(2px); box-shadow: 0 2px 0px #b45309; background-color: #fbbf24; }
+  .btn-add-cart:active { transform: translateY(4px); box-shadow: none; }
+</style>

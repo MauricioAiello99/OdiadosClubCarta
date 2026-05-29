@@ -3,8 +3,9 @@ export interface Product {
     name: string;
     description: string;
     price: number;
-    category: 'blacklist' | 'clasicas';
+    category: 'blacklist' | 'clasicas' | 'ofertas';
     isNew?: boolean;
+    detail?: string;
 }
 
 export const menuData: Product[] = [
@@ -12,29 +13,38 @@ export const menuData: Product[] = [
         id: '1',
         name: 'Public Enemy',
         description: 'Carne, queso cheddar, bacon, cebolla caramelizada, queso azul, salsa antipática.',
-        price: 14000,
+        price: 15000,
         category: 'blacklist',
         isNew: true
-    },
-    {
-        id: '2',
-        name: 'Clickbait',
-        description: 'Carne, triple de parmesano crocante, mayonesa especial, salsa antipatica.',
-        price: 14000,
-        category: 'blacklist'
     },
     {
         id: '3',
         name: 'Shadowban',
         description: 'Carne, queso cheddar, salsa tasty, bacon.',
-        price: 13000,
+        price: 14000,
         category: 'blacklist'
     },
     {
         id: '4',
         name: 'Cancelada',
-        description: 'Carne, cheddar, salsa envidia, bacon.',
-        price: 12000,
+        description: 'Carne, doble queso cheddar, salsa envidia.',
+        price: 13000,
         category: 'blacklist'
+    },
+    {
+        id: '5',
+        name: '4 X CANCELADAS',
+        description: 'Cuatro hamburguesas canceladas: Carne, doble cheddar, salsa envidia',
+        price: 45000,
+        category: 'ofertas',
+        detail: '🧀 Doble  cheddar'
+    },
+    {
+        id: '6',
+        name: '2X SHADOWBAN',
+        description: '2 hamburguesas shadowbans: Carne,  cheddar, salsa tasty, bacon.',
+        price: 25000,
+        detail: '🧀  Cheddar',
+        category: 'ofertas'
     }
 ];

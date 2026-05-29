@@ -2,10 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/layout/Header.astro';
 import ProductCard from '../components/menu/ProductCard.astro';
+import PromoCard from '../components/menu/PromoCard.astro';
 import { menuData } from '../data/menu-data';
 
-// Filtramos las burgers de la Blacklist
 const blacklist = menuData.filter(p => p.category === 'blacklist');
+const ofertas = menuData.filter(p => p.category === 'ofertas');
 ---
 
 <Layout title="Odiados Club | Menú">
@@ -25,6 +26,15 @@ const blacklist = menuData.filter(p => p.category === 'blacklist');
         <div class="grid-container">
             {blacklist.map(product => (
                 <ProductCard product={product} />
+            ))}
+        </div>
+    </section>
+
+    <section id="ofertas" class="menu-section ofertas-section">
+        <h2 class="section-title ofertas-title font-gothic">OFERTAS</h2>
+        <div class="grid-container">
+            {ofertas.map(product => (
+                <PromoCard product={product} />
             ))}
         </div>
     </section>
@@ -106,8 +116,16 @@ const blacklist = menuData.filter(p => p.category === 'blacklist');
 
   .grid-container {
     display: grid;
-    /* Grid responsive: 1 columna en móvil, 2 si hay espacio */
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+  }
+
+  .ofertas-section {
+    border-top: 4px solid #f59e0b;
+  }
+
+  .ofertas-title {
+    color: #f59e0b;
+    border-bottom: 1px solid #f59e0b;
   }
 </style>
