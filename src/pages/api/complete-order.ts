@@ -3,7 +3,7 @@ import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 
 export const POST: APIRoute = async ({ request }) => {
-  const { rowIndex } = await request.json();
+  const { rowIndex, status = 'Listo' } = await request.json();
 
   const privateKey = import.meta.env.GOOGLE_PRIVATE_KEY
     ? import.meta.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ success: false, error: 'Pedido no encontrado' }), { status: 404 });
   }
 
-  target.set('Estado', 'Listo');
+  target.set('Estado', status);
   await target.save();
 
   return new Response(JSON.stringify({ success: true }), { status: 200 });

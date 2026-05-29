@@ -198,47 +198,60 @@ export const prerender = false;
       font-weight: 900;
       letter-spacing: 1px;
     }
-    :global(.card-footer) {
-      padding: 1.2rem 1.5rem;
-      background: #151515;
-      border-top: 1px solid #222;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
     :global(.order-total) {
       font-size: 1.8rem;
       font-weight: 900;
       color: var(--white);
       letter-spacing: -1px;
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid #222;
     }
-    :global(.btn-done) {
-      background: #22c55e;
+    :global(.card-footer) {
+      display: flex;
+    }
+    :global(.btn-cancel-order) {
+      flex: 1;
+      background: #111;
       border: none;
-      color: #000;
-      padding: 0.9rem 1.4rem;
-      font-size: 0.9rem;
+      border-top: 1px solid #222;
+      color: #555;
+      padding: 1rem;
+      font-size: 0.85rem;
       font-weight: 900;
       font-family: 'Inter', sans-serif;
       letter-spacing: 2px;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 4px 0px #15803d;
       transition: all 0.2s;
     }
-    :global(.btn-done:hover) {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0px #15803d;
+    :global(.btn-cancel-order:hover) {
+      background: var(--red);
+      color: white;
     }
-    :global(.btn-done:active) {
-      transform: translateY(4px);
-      box-shadow: none;
+    :global(.btn-cancel-order:disabled) {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
+    :global(.btn-done) {
+      flex: 2;
+      background: #22c55e;
+      border: none;
+      color: #000;
+      padding: 1rem;
+      font-size: 0.85rem;
+      font-weight: 900;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: inset 0 4px 0px rgba(255,255,255,0.1);
+    }
+    :global(.btn-done:hover) { background: #16a34a; }
     :global(.btn-done:disabled) {
       opacity: 0.4;
       cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
     }
 
     :global(.empty-state) {
@@ -361,20 +374,24 @@ export const prerender = false;
             <div class="order-items">
               <div class="panel-label">DETALLE DEL PEDIDO:</div>
               <p>${order.detalle}</p>
+              <div class="order-total">${order.total}</div>
             </div>
             <div class="card-footer">
-              <span class="order-total">${order.total}</span>
+              <button class="btn-cancel-order" data-row="${order.rowIndex}">✕ CANCELAR</button>
               <button class="btn-done" data-row="${order.rowIndex}">✓ LISTO</button>
             </div>
           </div>`;
       }).join('');
 
       ordersGrid.querySelectorAll('.btn-done').forEach(btn => {
-        btn.addEventListener('click', () => markDone(btn));
+        btn.addEventListener('click', () => markDone(btn, 'Listo'));
+      });
+      ordersGrid.querySelectorAll('.btn-cancel-order').forEach(btn => {
+        btn.addEventListener('click', () => markDone(btn, 'Cancelado'));
       });
     }
 
-    async function markDone(btn) {
+    async function markDone(btn, status) {
       const rowIndex = parseInt(btn.dataset.row);
       btn.disabled = true;
       btn.textContent = '...';
@@ -383,7 +400,7 @@ export const prerender = false;
         const res = await fetch('/api/complete-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ rowIndex }),
+          body: JSON.stringify({ rowIndex, status }),
         });
         const data = await res.json();
         if (data.success) {
