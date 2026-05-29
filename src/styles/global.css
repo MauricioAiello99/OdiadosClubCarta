@@ -30,6 +30,7 @@ body {
   background-color: #000;
   color: var(--color-white);
   font-family: var(--font-sans);
+  overscroll-behavior-y: none;
 }
 
 /* 3. CAMBIO AQUÍ: Ajustamos un poco el espaciado para que se lea mejor */
