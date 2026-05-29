@@ -1,0 +1,399 @@
+---
+export const prerender = false;
+---
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Comandera | Odiados Club</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Inter:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #D60000;
+      --black: #0a0a0a;
+      --white: #f5f5f5;
+      --gray: #1a1a1a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* LOGIN */
+    #login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .login-box {
+      background: var(--black);
+      border: 2px solid #222;
+      box-shadow: 8px 8px 0px var(--red);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+    .login-box h1 {
+      font-family: 'Pirata One', cursive;
+      font-size: 2.5rem;
+      color: var(--red);
+      margin-bottom: 0.25rem;
+    }
+    .login-box p {
+      font-size: 0.75rem;
+      color: #555;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+    .login-box input {
+      width: 100%;
+      background: #111;
+      border: 1px solid #333;
+      color: var(--white);
+      padding: 0.9rem 1rem;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 4px;
+      text-align: center;
+      margin-bottom: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-box input:focus { border-color: var(--red); }
+    .login-box button {
+      width: 100%;
+      background: var(--red);
+      color: white;
+      border: none;
+      padding: 0.9rem;
+      font-size: 1rem;
+      font-weight: 900;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .login-box button:hover { background: #ff1a1a; }
+    #login-error {
+      color: var(--red);
+      font-size: 0.8rem;
+      margin-top: 0.75rem;
+      display: none;
+    }
+
+    /* COMANDERA */
+    #comandera-screen { display: none; }
+    .top-bar {
+      background: var(--black);
+      border-bottom: 3px solid var(--red);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .top-bar h1 {
+      font-family: 'Pirata One', cursive;
+      font-size: 1.8rem;
+      color: var(--red);
+    }
+    .top-bar .status-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #555;
+      text-transform: uppercase;
+    }
+    .top-bar .status-pill span {
+      color: #22c55e;
+    }
+
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1.5rem;
+    }
+
+    .order-card {
+      background: var(--black);
+      border: 2px solid #222;
+      box-shadow: 4px 4px 0px var(--red);
+      display: flex;
+      flex-direction: column;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .card-header {
+      background: #050505;
+      border-bottom: 1px solid #222;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .order-id {
+      font-family: 'Pirata One', cursive;
+      font-size: 1.3rem;
+      color: var(--red);
+    }
+    .order-time {
+      font-size: 0.65rem;
+      color: #555;
+      text-align: right;
+    }
+    .order-delivery {
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #888;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .order-items {
+      padding: 12px 14px;
+      flex: 1;
+    }
+    .order-items p {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--white);
+      white-space: pre-line;
+      font-weight: 700;
+    }
+    .card-footer {
+      padding: 12px 14px;
+      border-top: 1px solid #1a1a1a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .order-total {
+      font-family: 'Pirata One', cursive;
+      font-size: 1.4rem;
+      color: var(--white);
+    }
+    .btn-done {
+      background: #111;
+      border: 1px solid #333;
+      color: #555;
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-done:hover {
+      background: #22c55e;
+      color: #000;
+      border-color: #22c55e;
+    }
+    .btn-done:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 1rem;
+    }
+    .empty-state p {
+      font-family: 'Pirata One', cursive;
+      font-size: 2rem;
+      color: #222;
+    }
+    .empty-state span {
+      display: block;
+      font-size: 0.75rem;
+      color: #333;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-screen">
+    <div class="login-box">
+      <h1>ODIADOS</h1>
+      <p>Comandera — Acceso restringido</p>
+      <input type="password" id="pwd-input" placeholder="CONTRASEÑA" autocomplete="off" />
+      <button id="btn-login">ENTRAR</button>
+      <p id="login-error">Contraseña incorrecta</p>
+    </div>
+  </div>
+
+  <!-- COMANDERA -->
+  <div id="comandera-screen">
+    <div class="top-bar">
+      <h1>💀 COMANDERA</h1>
+      <div class="status-pill">Actualizando en <span id="countdown">15</span>s</div>
+    </div>
+    <div class="orders-grid" id="orders-grid"></div>
+  </div>
+
+  <script define:vars={{ envPassword: import.meta.env.COMANDERA_PASSWORD || '' }}>
+    const loginScreen = document.getElementById('login-screen');
+    const comanderaScreen = document.getElementById('comandera-screen');
+    const pwdInput = document.getElementById('pwd-input');
+    const btnLogin = document.getElementById('btn-login');
+    const loginError = document.getElementById('login-error');
+    const ordersGrid = document.getElementById('orders-grid');
+    const countdownEl = document.getElementById('countdown');
+
+    const SESSION_KEY = 'comandera_auth';
+    let pollInterval = null;
+    let countdownTimer = null;
+
+    function checkSession() {
+      return sessionStorage.getItem(SESSION_KEY) === 'ok';
+    }
+
+    function enterComandera() {
+      loginScreen.style.display = 'none';
+      comanderaScreen.style.display = 'block';
+      sessionStorage.setItem(SESSION_KEY, 'ok');
+      fetchOrders();
+      startPolling();
+    }
+
+    btnLogin.addEventListener('click', tryLogin);
+    pwdInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryLogin(); });
+
+    function tryLogin() {
+      const val = pwdInput.value.trim();
+      if (val === envPassword) {
+        loginError.style.display = 'none';
+        enterComandera();
+      } else {
+        loginError.style.display = 'block';
+        pwdInput.value = '';
+        pwdInput.focus();
+      }
+    }
+
+    if (checkSession()) {
+      enterComandera();
+    }
+
+    async function fetchOrders() {
+      try {
+        const res = await fetch('/api/orders');
+        const data = await res.json();
+        renderOrders(data.orders || []);
+      } catch (e) {
+        console.error('Error al cargar pedidos', e);
+      }
+    }
+
+    function renderOrders(orders) {
+      if (orders.length === 0) {
+        ordersGrid.innerHTML = `
+          <div class="empty-state">
+            <p>Sin pedidos pendientes</p>
+            <span>Todo tranquilo por ahora</span>
+          </div>`;
+        return;
+      }
+
+      ordersGrid.innerHTML = orders.map(order => {
+        const deliveryIcon = order.envio === 'Delivery' ? '🛵' : '🥡';
+        return `
+          <div class="order-card" data-row="${order.rowIndex}">
+            <div class="card-header">
+              <span class="order-id">${order.id}</span>
+              <span class="order-time">${order.fecha}</span>
+            </div>
+            <div class="order-delivery">${deliveryIcon} ${order.envio}</div>
+            <div class="order-items">
+              <p>${order.detalle}</p>
+            </div>
+            <div class="card-footer">
+              <span class="order-total">${order.total}</span>
+              <button class="btn-done" data-row="${order.rowIndex}">✓ LISTO</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      ordersGrid.querySelectorAll('.btn-done').forEach(btn => {
+        btn.addEventListener('click', () => markDone(btn));
+      });
+    }
+
+    async function markDone(btn) {
+      const rowIndex = parseInt(btn.dataset.row);
+      btn.disabled = true;
+      btn.textContent = '...';
+
+      try {
+        const res = await fetch('/api/complete-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rowIndex }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          const card = btn.closest('.order-card');
+          card.style.transition = 'opacity 0.4s, transform 0.4s';
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.9)';
+          setTimeout(() => { card.remove(); checkEmpty(); }, 400);
+        } else {
+          btn.disabled = false;
+          btn.textContent = '✓ LISTO';
+        }
+      } catch {
+        btn.disabled = false;
+        btn.textContent = '✓ LISTO';
+      }
+    }
+
+    function checkEmpty() {
+      if (ordersGrid.querySelectorAll('.order-card').length === 0) {
+        ordersGrid.innerHTML = `
+          <div class="empty-state">
+            <p>Sin pedidos pendientes</p>
+            <span>Todo tranquilo por ahora</span>
+          </div>`;
+      }
+    }
+
+    function startPolling() {
+      let secs = 15;
+      countdownEl.textContent = secs;
+
+      countdownTimer = setInterval(() => {
+        secs--;
+        countdownEl.textContent = secs;
+        if (secs <= 0) {
+          secs = 15;
+          fetchOrders();
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
