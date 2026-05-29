@@ -127,102 +127,131 @@ export const prerender = false;
       padding: 1.5rem;
     }
 
-    .order-card {
-      background: var(--black);
+    :global(.order-card) {
+      background: #111;
       border: 2px solid #222;
-      box-shadow: 4px 4px 0px var(--red);
+      box-shadow: 8px 8px 0px var(--red);
       display: flex;
       flex-direction: column;
       animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: border-color 0.2s;
     }
+    :global(.order-card:hover) { border-color: var(--red); }
     @keyframes popIn {
       from { opacity: 0; transform: scale(0.95) translateY(10px); }
       to   { opacity: 1; transform: scale(1) translateY(0); }
     }
-    .card-header {
-      background: #050505;
-      border-bottom: 1px solid #222;
-      padding: 10px 14px;
+    :global(.card-header) {
+      padding: 1.2rem 1.5rem 0 1.5rem;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
+      gap: 10px;
     }
-    .order-id {
+    :global(.order-id) {
       font-family: 'Pirata One', cursive;
-      font-size: 1.3rem;
-      color: var(--red);
+      font-size: 2rem;
+      color: var(--white);
+      line-height: 0.9;
+      text-transform: uppercase;
     }
-    .order-time {
+    :global(.order-time) {
       font-size: 0.65rem;
       color: #555;
       text-align: right;
+      line-height: 1.5;
     }
-    .order-delivery {
-      font-size: 0.7rem;
+    :global(.card-separator) {
+      height: 4px;
+      width: 50px;
+      background: var(--red);
+      margin: 0.8rem 1.5rem;
+    }
+    :global(.order-delivery) {
+      font-size: 0.75rem;
       font-weight: 900;
       letter-spacing: 2px;
-      color: #888;
+      color: #aaa;
       text-transform: uppercase;
-      padding: 8px 14px;
-      border-bottom: 1px solid #1a1a1a;
+      padding: 0 1.5rem 0.8rem 1.5rem;
     }
-    .order-items {
-      padding: 12px 14px;
+    :global(.order-items) {
+      background: #0a0a0a;
+      border-top: 2px solid var(--red);
+      border-bottom: 1px solid #222;
+      padding: 1rem 1.5rem;
       flex: 1;
     }
-    .order-items p {
-      font-size: 0.9rem;
-      line-height: 1.8;
-      color: var(--white);
-      white-space: pre-line;
-      font-weight: 700;
+    :global(.panel-label) {
+      font-size: 0.7rem;
+      color: #555;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
     }
-    .card-footer {
-      padding: 12px 14px;
-      border-top: 1px solid #1a1a1a;
+    :global(.order-items p) {
+      font-size: 0.95rem;
+      line-height: 2;
+      color: var(--red);
+      white-space: pre-line;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+    :global(.card-footer) {
+      padding: 1.2rem 1.5rem;
+      background: #151515;
+      border-top: 1px solid #222;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .order-total {
-      font-family: 'Pirata One', cursive;
-      font-size: 1.4rem;
+    :global(.order-total) {
+      font-size: 1.8rem;
+      font-weight: 900;
       color: var(--white);
+      letter-spacing: -1px;
     }
-    .btn-done {
-      background: #111;
-      border: 1px solid #333;
-      color: #555;
-      padding: 8px 16px;
-      font-size: 0.75rem;
+    :global(.btn-done) {
+      background: #22c55e;
+      border: none;
+      color: #000;
+      padding: 0.9rem 1.4rem;
+      font-size: 0.9rem;
       font-weight: 900;
       font-family: 'Inter', sans-serif;
       letter-spacing: 2px;
       text-transform: uppercase;
       cursor: pointer;
+      box-shadow: 0 4px 0px #15803d;
       transition: all 0.2s;
     }
-    .btn-done:hover {
-      background: #22c55e;
-      color: #000;
-      border-color: #22c55e;
+    :global(.btn-done:hover) {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0px #15803d;
     }
-    .btn-done:disabled {
+    :global(.btn-done:active) {
+      transform: translateY(4px);
+      box-shadow: none;
+    }
+    :global(.btn-done:disabled) {
       opacity: 0.4;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
-    .empty-state {
+    :global(.empty-state) {
       grid-column: 1 / -1;
       text-align: center;
       padding: 4rem 1rem;
     }
-    .empty-state p {
+    :global(.empty-state p) {
       font-family: 'Pirata One', cursive;
       font-size: 2rem;
       color: #222;
     }
-    .empty-state span {
+    :global(.empty-state span) {
       display: block;
       font-size: 0.75rem;
       color: #333;
@@ -327,8 +356,10 @@ export const prerender = false;
               <span class="order-id">${order.id}</span>
               <span class="order-time">${order.fecha}</span>
             </div>
+            <div class="card-separator"></div>
             <div class="order-delivery">${deliveryIcon} ${order.envio}</div>
             <div class="order-items">
+              <div class="panel-label">DETALLE DEL PEDIDO:</div>
               <p>${order.detalle}</p>
             </div>
             <div class="card-footer">
