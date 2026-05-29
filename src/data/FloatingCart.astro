@@ -12,16 +12,18 @@
             </div>
         </div>
 
+        <ul id="cart-items-list" class="cart-items-list"></ul>
+
         <div class="actions-section">
             <div class="left-group">
                 <button id="btn-cancel" class="btn-cancel" title="Vaciar carrito">✕</button>
                 <div class="total-info">
                     <span class="total-label">TOTAL ESTIMADO</span>
-                    <span class="total-amount">$<span id="cart-total">0</span></span>
+                    <span class="total-amount font-gothic">$<span id="cart-total">0</span></span>
                 </div>
             </div>
-            
-            <button id="btn-checkout" class="btn-checkout">
+
+            <button id="btn-checkout" class="btn-checkout font-gothic">
                 CONFIRMAR <span class="arrow-icon">→</span>
             </button>
         </div>
@@ -29,38 +31,57 @@
 </div>
 
 <script>
-    // Importamos desde tu archivo 'card' (el nombre que me dijiste)
-    import { cartItems } from '../store/cart'; 
+    import { cartItems, removeProduct, updateQuantity } from '../store/cart';
 
     const container = document.getElementById('cart-container');
     const totalSpan = document.getElementById('cart-total');
     const checkoutBtn = document.getElementById('btn-checkout');
     const cancelBtn = document.getElementById('btn-cancel');
+    const itemsList = document.getElementById('cart-items-list');
 
-    // --- CORRECCIÓN AQUÍ ---
-    // Agregamos 'readonly' para que TypeScript acepte el array protegido
     cartItems.subscribe((items: readonly any[]) => {
         if (!container) return;
 
         if (items.length > 0) {
             container.classList.remove('hidden');
-            
             const total = items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
-            
             if (totalSpan) totalSpan.innerText = total.toLocaleString('es-AR');
+
+            if (itemsList) {
+                itemsList.innerHTML = items.map((item: any) => `
+                    <li class="cart-item" data-id="${item.id}">
+                        <span class="item-name">${item.name}</span>
+                        <div class="item-controls">
+                            <button class="qty-btn btn-minus" data-id="${item.id}">−</button>
+                            <span class="item-qty">${item.quantity}</span>
+                            <button class="qty-btn btn-plus" data-id="${item.id}">+</button>
+                            <button class="btn-remove" data-id="${item.id}" title="Eliminar">✕</button>
+                        </div>
+                        <span class="item-price">$${(item.price * item.quantity).toLocaleString('es-AR')}</span>
+                    </li>
+                `).join('');
+
+                itemsList.querySelectorAll('.btn-minus').forEach(btn => {
+                    btn.addEventListener('click', () => updateQuantity((btn as HTMLElement).dataset.id!, -1));
+                });
+                itemsList.querySelectorAll('.btn-plus').forEach(btn => {
+                    btn.addEventListener('click', () => updateQuantity((btn as HTMLElement).dataset.id!, 1));
+                });
+                itemsList.querySelectorAll('.btn-remove').forEach(btn => {
+                    btn.addEventListener('click', () => removeProduct((btn as HTMLElement).dataset.id!));
+                });
+            }
         } else {
             container.classList.add('hidden');
         }
     });
 
-    // 2. LOGICA CANCELAR
     cancelBtn?.addEventListener('click', () => {
         if(confirm('¿Seguro que quieres vaciar el pedido?')) {
-            cartItems.set([]); 
+            cartItems.set([]);
         }
     });
 
-    // 3. LOGICA CONFIRMAR
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', async () => {
             const items = cartItems.get();
@@ -78,17 +99,17 @@
                 const response = await fetch('/api/order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        items: items, 
-                        deliveryMethod: deliveryMethod 
-                    }), 
+                    body: JSON.stringify({
+                        items: items,
+                        deliveryMethod: deliveryMethod
+                    }),
                 });
 
                 const data = await response.json();
-                
+
                 if (data.success) {
-                    cartItems.set([]); 
-                    window.location.href = data.redirectUrl; 
+                    cartItems.set([]);
+                    window.location.href = data.redirectUrl;
                 } else {
                     alert('Error: ' + (data.error || 'Algo salió mal'));
                     restoreBtn(originalText);
@@ -111,23 +132,230 @@
 </script>
 
 <style>
-    /* Estilos intactos */
-    .cart-wrapper { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 480px; z-index: 9999; font-family: sans-serif; animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .cart-wrapper {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 95%;
+        max-width: 500px;
+        z-index: 9999;
+        font-family: var(--font-sans);
+        animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
     .hidden { display: none !important; }
-    .cart-inner { background-color: #0f0f0f; border: 1px solid #333; box-shadow: 0 15px 40px rgba(0,0,0,0.9); display: flex; flex-direction: column; }
-    .cart-deco-top { height: 4px; width: 100%; background: var(--color-red, #dc2626); box-shadow: 0 0 15px var(--color-red, #dc2626); }
-    .delivery-section { background-color: #050505; padding: 8px 15px; border-bottom: 1px solid #222; display: flex; align-items: center; gap: 10px; }
-    .delivery-label { font-size: 0.7rem; color: #666; font-weight: bold; letter-spacing: 1px; }
+
+    /* Contenedor principal — mismo lenguaje que las cards */
+    .cart-inner {
+        background-color: var(--color-black);
+        border: 2px solid #222;
+        box-shadow: 8px 8px 0px var(--color-red), 0 20px 50px rgba(0,0,0,0.95);
+        display: flex;
+        flex-direction: column;
+    }
+    .cart-deco-top {
+        height: 4px;
+        width: 100%;
+        background: var(--color-red);
+        box-shadow: 0 0 20px var(--color-red);
+    }
+
+    /* Sección entrega */
+    .delivery-section {
+        background-color: #050505;
+        padding: 8px 15px;
+        border-bottom: 1px solid #222;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .delivery-label {
+        font-size: 0.65rem;
+        color: #555;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
     .select-wrapper { flex-grow: 1; position: relative; }
-    .delivery-select { width: 100%; background: transparent; color: white; border: none; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; cursor: pointer; outline: none; text-align: right; padding-right: 20px; appearance: none; }
+    .delivery-select {
+        width: 100%;
+        background: transparent;
+        color: var(--color-white);
+        border: none;
+        font-size: 0.85rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        cursor: pointer;
+        outline: none;
+        text-align: right;
+        padding-right: 20px;
+        appearance: none;
+        font-family: var(--font-sans);
+    }
     .delivery-select option { background: black; }
-    .select-arrow { position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: var(--color-red, #dc2626); font-size: 0.7rem; pointer-events: none; }
-    .actions-section { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
+    .select-arrow {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-red);
+        font-size: 0.7rem;
+        pointer-events: none;
+    }
+
+    /* Lista de items */
+    .cart-items-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: 240px;
+        overflow-y: auto;
+        border-bottom: 2px solid var(--color-red);
+    }
+    .cart-items-list::-webkit-scrollbar { width: 3px; }
+    .cart-items-list::-webkit-scrollbar-track { background: #000; }
+    .cart-items-list::-webkit-scrollbar-thumb { background: var(--color-red); }
+
+    /* :global() para elementos generados dinámicamente con innerHTML */
+    :global(.cart-item) {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 15px;
+        border-bottom: 1px solid #1a1a1a;
+        transition: background 0.15s;
+    }
+    :global(.cart-item:last-child) { border-bottom: none; }
+    :global(.cart-item:hover) { background-color: #0d0d0d; }
+
+    :global(.item-name) {
+        flex: 1;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--color-white);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+    }
+
+    :global(.item-controls) { display: flex; align-items: center; gap: 6px; }
+
+    :global(.qty-btn),
+    :global(.btn-remove) {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #111;
+        border: 1px solid #333;
+        color: #555;
+        font-size: 0.9rem;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        line-height: 1;
+    }
+    :global(.qty-btn:hover) {
+        background: var(--color-red);
+        color: white;
+        border-color: var(--color-red);
+    }
+    :global(.item-qty) {
+        min-width: 24px;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 900;
+        color: var(--color-white);
+    }
+    :global(.btn-remove) { margin-left: 2px; }
+    :global(.btn-remove:hover) {
+        background: var(--color-red);
+        color: white;
+        border-color: var(--color-red);
+        transform: rotate(90deg);
+    }
+
+    :global(.item-price) {
+        font-size: 0.95rem;
+        font-weight: 900;
+        color: var(--color-white);
+        min-width: 70px;
+        text-align: right;
+    }
+
+    /* Sección inferior — total + acciones */
+    .actions-section {
+        padding: 12px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #080808;
+    }
     .left-group { display: flex; align-items: center; gap: 15px; }
-    .btn-cancel { width: 32px; height: 32px; border-radius: 50%; background: #1a1a1a; border: 1px solid #333; color: #666; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-    .btn-cancel:hover { background: var(--color-red, #dc2626); color: white; border-color: var(--color-red, #dc2626); transform: rotate(90deg); }
+    .btn-cancel {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #111;
+        border: 1px solid #333;
+        color: #555;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        font-size: 0.8rem;
+    }
+    .btn-cancel:hover {
+        background: var(--color-red);
+        color: white;
+        border-color: var(--color-red);
+        transform: rotate(90deg);
+    }
     .total-info { display: flex; flex-direction: column; }
-    .total-label { font-size: 0.6rem; color: #666; letter-spacing: 1px; font-weight: bold; }
-    .total-amount { font-size: 1.5rem; font-weight: 900; color: white; line-height: 1; }
-    .btn-checkout { background-color: var(--color-red, #dc2626); color: white; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 0 rgba(153, 27, 27, 0.5); }
-    .btn-checkout:hover { background-
+    .total-label {
+        font-size: 0.55rem;
+        color: #555;
+        letter-spacing: 2px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .total-amount {
+        font-size: 1.8rem;
+        color: var(--color-white);
+        line-height: 1;
+        letter-spacing: 1px;
+    }
+    .btn-checkout {
+        background-color: var(--color-red);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.3rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 0 #7a0000;
+    }
+    .btn-checkout:hover {
+        background-color: #ff1a1a;
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 #7a0000;
+    }
+    .btn-checkout:active {
+        transform: translateY(4px);
+        box-shadow: none;
+    }
+    .btn-checkout:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+</style>

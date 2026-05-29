@@ -27,3 +27,19 @@ export function addProduct(product: { id: string, name: string, price: number })
     cartItems.set([...currentItems, { ...product, quantity: 1 }]);
   }
 }
+
+export function removeProduct(id: string) {
+  cartItems.set(cartItems.get().filter((item) => item.id !== id));
+}
+
+export function updateQuantity(id: string, delta: number) {
+  const currentItems = cartItems.get();
+  const item = currentItems.find((i) => i.id === id);
+  if (!item) return;
+  const newQty = item.quantity + delta;
+  if (newQty <= 0) {
+    removeProduct(id);
+  } else {
+    cartItems.set(currentItems.map((i) => i.id === id ? { ...i, quantity: newQty } : i));
+  }
+}
